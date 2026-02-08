@@ -1,5 +1,4 @@
-// GitHub API module - exports functions for testing
-// Run with: npx tsx fetch-github-user.ts
+import { promises as fs } from 'fs';
 
 export interface GitHubUser {
   login: string;
@@ -94,4 +93,13 @@ export function formatUserInfo(user: GitHubUser): string {
 
 export function displayUserInfo(user: GitHubUser): void {
   console.log(formatUserInfo(user));
+}
+
+export async function saveUserInfo(user: GitHubUser, filepath: string): Promise<void> {
+  const formatted = formatUserInfo(user);
+  await fs.writeFile(filepath, formatted);
+}
+
+export async function saveUserJson(user: GitHubUser, filepath: string): Promise<void> {
+  await fs.writeFile(filepath, JSON.stringify(user, null, 2));
 }

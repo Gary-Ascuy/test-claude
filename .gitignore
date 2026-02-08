@@ -11,6 +11,9 @@ coverage
 build
 dist
 
+# Output directory
+output
+
 # Misc
 .DS_Store
 *.pem
