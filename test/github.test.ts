@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getGitHubUser, formatUserInfo, type GitHubUser } from '../src/github.js';
+import { getGitHubUser, formatUserInfo } from '../src/github.js';
+import type { GitHubUser } from '../src/types.js';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
