@@ -6,55 +6,90 @@ import type { GitHubUser } from '../src/types.js';
 const mockFetch = vi.fn();
 global.fetch = mockFetch as any;
 
+const mockApiResponse = {
+  login: 'garyascuy',
+  id: 123456,
+  node_id: 'MDQ6VXNlcjEyMzQ1Ng==',
+  avatar_url: 'https://avatars.githubusercontent.com/u/123456?v=4',
+  gravatar_id: '',
+  url: 'https://api.github.com/users/garyascuy',
+  html_url: 'https://github.com/garyascuy',
+  followers_url: 'https://api.github.com/users/garyascuy/followers',
+  following_url: 'https://api.github.com/users/garyascuy/following{/other_user}',
+  gists_url: 'https://api.github.com/users/garyascuy/gists{/gist_id}',
+  starred_url: 'https://api.github.com/users/garyascuy/starred{/owner}{/repo}',
+  subscriptions_url: 'https://api.github.com/users/garyascuy/subscriptions',
+  organizations_url: 'https://api.github.com/users/garyascuy/orgs',
+  repos_url: 'https://api.github.com/users/garyascuy/repos',
+  events_url: 'https://api.github.com/users/garyascuy/events{/privacy}',
+  received_events_url: 'https://api.github.com/users/garyascuy/received_events',
+  type: 'User',
+  site_admin: false,
+  name: 'Gary Ascuy',
+  company: null,
+  blog: '',
+  location: 'Colombia',
+  email: null,
+  hireable: null,
+  bio: 'Software Developer',
+  twitter_username: null,
+  public_repos: 25,
+  public_gists: 5,
+  followers: 100,
+  following: 50,
+  created_at: '2015-01-01T00:00:00Z',
+  updated_at: '2024-01-01T00:00:00Z',
+};
+
+const expectedUser: GitHubUser = {
+  login: 'garyascuy',
+  id: 123456,
+  nodeId: 'MDQ6VXNlcjEyMzQ1Ng==',
+  avatarUrl: 'https://avatars.githubusercontent.com/u/123456?v=4',
+  gravatarId: '',
+  url: 'https://api.github.com/users/garyascuy',
+  htmlUrl: 'https://github.com/garyascuy',
+  followersUrl: 'https://api.github.com/users/garyascuy/followers',
+  followingUrl: 'https://api.github.com/users/garyascuy/following{/other_user}',
+  gistsUrl: 'https://api.github.com/users/garyascuy/gists{/gist_id}',
+  starredUrl: 'https://api.github.com/users/garyascuy/starred{/owner}{/repo}',
+  subscriptionsUrl: 'https://api.github.com/users/garyascuy/subscriptions',
+  organizationsUrl: 'https://api.github.com/users/garyascuy/orgs',
+  reposUrl: 'https://api.github.com/users/garyascuy/repos',
+  eventsUrl: 'https://api.github.com/users/garyascuy/events{/privacy}',
+  receivedEventsUrl: 'https://api.github.com/users/garyascuy/received_events',
+  type: 'User',
+  siteAdmin: false,
+  name: 'Gary Ascuy',
+  company: null,
+  blog: '',
+  location: 'Colombia',
+  email: null,
+  hireable: null,
+  bio: 'Software Developer',
+  twitterUsername: null,
+  publicRepos: 25,
+  publicGists: 5,
+  followers: 100,
+  following: 50,
+  createdAt: '2015-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+};
+
 describe('getGitHubUser', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should fetch a GitHub user successfully', async () => {
-    const mockUser: GitHubUser = {
-      login: 'garyascuy',
-      id: 123456,
-      node_id: 'MDQ6VXNlcjEyMzQ1Ng==',
-      avatar_url: 'https://avatars.githubusercontent.com/u/123456?v=4',
-      gravatar_id: '',
-      url: 'https://api.github.com/users/garyascuy',
-      html_url: 'https://github.com/garyascuy',
-      followers_url: 'https://api.github.com/users/garyascuy/followers',
-      following_url: 'https://api.github.com/users/garyascuy/following{/other_user}',
-      gists_url: 'https://api.github.com/users/garyascuy/gists{/gist_id}',
-      starred_url: 'https://api.github.com/users/garyascuy/starred{/owner}{/repo}',
-      subscriptions_url: 'https://api.github.com/users/garyascuy/subscriptions',
-      organizations_url: 'https://api.github.com/users/garyascuy/orgs',
-      repos_url: 'https://api.github.com/users/garyascuy/repos',
-      events_url: 'https://api.github.com/users/garyascuy/events{/privacy}',
-      received_events_url: 'https://api.github.com/users/garyascuy/received_events',
-      type: 'User',
-      site_admin: false,
-      name: 'Gary Ascuy',
-      company: null,
-      blog: '',
-      location: 'Colombia',
-      email: null,
-      hireable: null,
-      bio: 'Software Developer',
-      twitter_username: null,
-      public_repos: 25,
-      public_gists: 5,
-      followers: 100,
-      following: 50,
-      created_at: '2015-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-    };
-
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => mockUser,
+      json: async () => mockApiResponse,
     } as Response);
 
     const result = await getGitHubUser('garyascuy');
 
-    expect(result).toEqual(mockUser);
+    expect(result).toEqual(expectedUser);
     expect(mockFetch).toHaveBeenCalledTimes(1);
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.github.com/users/garyascuy',
@@ -92,44 +127,9 @@ describe('getGitHubUser', () => {
   });
 
   it('should construct correct API URL for different usernames', async () => {
-    const mockUser: GitHubUser = {
-      login: 'testuser',
-      id: 1,
-      node_id: 'test',
-      avatar_url: 'https://example.com/avatar.png',
-      gravatar_id: '',
-      url: '',
-      html_url: '',
-      followers_url: '',
-      following_url: '',
-      gists_url: '',
-      starred_url: '',
-      subscriptions_url: '',
-      organizations_url: '',
-      repos_url: '',
-      events_url: '',
-      received_events_url: '',
-      type: 'User',
-      site_admin: false,
-      name: null,
-      company: null,
-      blog: null,
-      location: null,
-      email: null,
-      hireable: null,
-      bio: null,
-      twitter_username: null,
-      public_repos: 0,
-      public_gists: 0,
-      followers: 0,
-      following: 0,
-      created_at: '',
-      updated_at: '',
-    };
-
     mockFetch.mockResolvedValue({
       ok: true,
-      json: async () => mockUser,
+      json: async () => ({ ...mockApiResponse, login: 'octocat' }),
     } as Response);
 
     await getGitHubUser('octocat');
@@ -150,22 +150,22 @@ describe('formatUserInfo', () => {
   const mockUser: GitHubUser = {
     login: 'garyascuy',
     id: 123456,
-    node_id: 'MDQ6VXNlcjEyMzQ1Ng==',
-    avatar_url: 'https://avatars.githubusercontent.com/u/123456?v=4',
-    gravatar_id: '',
+    nodeId: 'MDQ6VXNlcjEyMzQ1Ng==',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/123456?v=4',
+    gravatarId: '',
     url: 'https://api.github.com/users/garyascuy',
-    html_url: 'https://github.com/garyascuy',
-    followers_url: 'https://api.github.com/users/garyascuy/followers',
-    following_url: 'https://api.github.com/users/garyascuy/following{/other_user}',
-    gists_url: 'https://api.github.com/users/garyascuy/gists{/gist_id}',
-    starred_url: 'https://api.github.com/users/garyascuy/starred{/owner}{/repo}',
-    subscriptions_url: 'https://api.github.com/users/garyascuy/subscriptions',
-    organizations_url: 'https://api.github.com/users/garyascuy/orgs',
-    repos_url: 'https://api.github.com/users/garyascuy/repos',
-    events_url: 'https://api.github.com/users/garyascuy/events{/privacy}',
-    received_events_url: 'https://api.github.com/users/garyascuy/received_events',
+    htmlUrl: 'https://github.com/garyascuy',
+    followersUrl: 'https://api.github.com/users/garyascuy/followers',
+    followingUrl: 'https://api.github.com/users/garyascuy/following{/other_user}',
+    gistsUrl: 'https://api.github.com/users/garyascuy/gists{/gist_id}',
+    starredUrl: 'https://api.github.com/users/garyascuy/starred{/owner}{/repo}',
+    subscriptionsUrl: 'https://api.github.com/users/garyascuy/subscriptions',
+    organizationsUrl: 'https://api.github.com/users/garyascuy/orgs',
+    reposUrl: 'https://api.github.com/users/garyascuy/repos',
+    eventsUrl: 'https://api.github.com/users/garyascuy/events{/privacy}',
+    receivedEventsUrl: 'https://api.github.com/users/garyascuy/received_events',
     type: 'User',
-    site_admin: false,
+    siteAdmin: false,
     name: 'Gary Ascuy',
     company: 'Acme Corp',
     blog: 'https://garyascuy.com',
@@ -173,13 +173,13 @@ describe('formatUserInfo', () => {
     email: 'gary@example.com',
     hireable: true,
     bio: 'Software Developer',
-    twitter_username: 'garyascuy',
-    public_repos: 25,
-    public_gists: 5,
+    twitterUsername: 'garyascuy',
+    publicRepos: 25,
+    publicGists: 5,
     followers: 100,
     following: 50,
-    created_at: '2015-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
+    createdAt: '2015-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
   };
 
   it('should format user information correctly', () => {
@@ -213,7 +213,7 @@ describe('formatUserInfo', () => {
       location: null,
       email: null,
       bio: null,
-      twitter_username: null,
+      twitterUsername: null,
     };
 
     const result = formatUserInfo(userWithNulls);

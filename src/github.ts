@@ -1,5 +1,42 @@
 import { promises as fs } from 'fs';
-import type { GitHubUser } from './types.js';
+import type { GitHubUser, GitHubApiResponse } from './types.js';
+
+function toCamelCase(data: GitHubApiResponse): GitHubUser {
+  return {
+    login: data.login,
+    id: data.id,
+    nodeId: data.node_id,
+    avatarUrl: data.avatar_url,
+    gravatarId: data.gravatar_id,
+    url: data.url,
+    htmlUrl: data.html_url,
+    followersUrl: data.followers_url,
+    followingUrl: data.following_url,
+    gistsUrl: data.gists_url,
+    starredUrl: data.starred_url,
+    subscriptionsUrl: data.subscriptions_url,
+    organizationsUrl: data.organizations_url,
+    reposUrl: data.repos_url,
+    eventsUrl: data.events_url,
+    receivedEventsUrl: data.received_events_url,
+    type: data.type,
+    siteAdmin: data.site_admin,
+    name: data.name,
+    company: data.company,
+    blog: data.blog,
+    location: data.location,
+    email: data.email,
+    hireable: data.hireable,
+    bio: data.bio,
+    twitterUsername: data.twitter_username,
+    publicRepos: data.public_repos,
+    publicGists: data.public_gists,
+    followers: data.followers,
+    following: data.following,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  };
+}
 
 export async function getGitHubUser(username: string): Promise<GitHubUser> {
   const url = `https://api.github.com/users/${username}`;
@@ -15,8 +52,8 @@ export async function getGitHubUser(username: string): Promise<GitHubUser> {
     throw new Error(`GitHub API returned ${response.status}: ${response.statusText}`);
   }
 
-  const data = await response.json() as GitHubUser;
-  return data;
+  const data = await response.json() as GitHubApiResponse;
+  return toCamelCase(data);
 }
 
 export function formatUserInfo(user: GitHubUser): string {
@@ -31,22 +68,22 @@ export function formatUserInfo(user: GitHubUser): string {
   sections.push(`Company:      ${user.company || 'N/A'}`);
   sections.push(`Email:        ${user.email || 'N/A'}`);
   sections.push(`Blog:         ${user.blog || 'N/A'}`);
-  sections.push(`Twitter:      ${user.twitter_username || 'N/A'}`);
+  sections.push(`Twitter:      ${user.twitterUsername || 'N/A'}`);
   sections.push('');
   sections.push('Stats');
   sections.push('-----');
-  sections.push(`Public Repos:   ${user.public_repos}`);
-  sections.push(`Public Gists:   ${user.public_gists}`);
+  sections.push(`Public Repos:   ${user.publicRepos}`);
+  sections.push(`Public Gists:   ${user.publicGists}`);
   sections.push(`Followers:      ${user.followers}`);
   sections.push(`Following:      ${user.following}`);
   sections.push('');
   sections.push('Dates');
   sections.push('-----');
-  sections.push(`Account Created: ${new Date(user.created_at).toLocaleDateString()}`);
-  sections.push(`Profile Updated: ${new Date(user.updated_at).toLocaleDateString()}`);
+  sections.push(`Account Created: ${new Date(user.createdAt).toLocaleDateString()}`);
+  sections.push(`Profile Updated: ${new Date(user.updatedAt).toLocaleDateString()}`);
   sections.push('');
-  sections.push(`Profile URL: ${user.html_url}`);
-  sections.push(`Avatar URL:  ${user.avatar_url}`);
+  sections.push(`Profile URL: ${user.htmlUrl}`);
+  sections.push(`Avatar URL:  ${user.avatarUrl}`);
 
   return sections.join('\n');
 }

@@ -1,6 +1,47 @@
 export interface GitHubUser {
   login: string;
   id: number;
+  nodeId: string;
+  avatarUrl: string;
+  gravatarId: string;
+  url: string;
+  htmlUrl: string;
+  followersUrl: string;
+  followingUrl: string;
+  gistsUrl: string;
+  starredUrl: string;
+  subscriptionsUrl: string;
+  organizationsUrl: string;
+  reposUrl: string;
+  eventsUrl: string;
+  receivedEventsUrl: string;
+  type: string;
+  siteAdmin: boolean;
+  name: string | null;
+  company: string | null;
+  blog: string | null;
+  location: string | null;
+  email: string | null;
+  hireable: boolean | null;
+  bio: string | null;
+  twitterUsername: string | null;
+  publicRepos: number;
+  publicGists: number;
+  followers: number;
+  following: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GitHubApiError {
+  status: number;
+  statusText: string;
+  message: string;
+}
+
+export interface GitHubApiResponse {
+  login: string;
+  id: number;
   node_id: string;
   avatar_url: string;
   gravatar_id: string;
@@ -31,10 +72,4 @@ export interface GitHubUser {
   following: number;
   created_at: string;
   updated_at: string;
-}
-
-export interface GitHubApiError {
-  status: number;
-  statusText: string;
-  message: string;
 }
