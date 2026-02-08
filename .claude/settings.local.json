@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init -y)",
+      "Bash(npm install:*)",
+      "Bash(npm pkg set type=module)",
+      "Bash(npm pkg set:*)",
+      "Bash(npm test)",
+      "Bash(npx:*)",
+      "Bash(pnpm install)",
+      "Bash(pnpm test)",
+      "Bash(pnpm start)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
